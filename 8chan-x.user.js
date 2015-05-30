@@ -733,6 +733,9 @@ function initMenu() { //Pashe, WTFPL
 	}
 	
 	if (isOnThread()) {
+		var menuButtonHolder = $('<span class="sub chx_topBarSub">[ </span>');
+		menuButtonHolder.appendTo($("div.boardlist"));
+		
 		$('#update_secs').remove();
 		
 		var updateNode = $("<span></span>");
@@ -756,14 +759,12 @@ function initMenu() { //Pashe, WTFPL
 		updateMenuStats();
 		
 		var galleryButton = $('<a href="javascript:void(0)" title="Gallery"><i class="fa fa-th-large chx_menuGalleryButton"></i></a>');
-		var menuButtonHolder = $('span.sub[data-description=0]').first();
-		
-		menuButtonHolder.html(function() {return this.innerHTML.replace("]", " / ");});
 		
 		galleryButton.appendTo(menuButtonHolder);
-		menuButtonHolder.html(function() {return this.innerHTML + " ]";});
 		
 		$(".chx_menuGalleryButton").on("click", toggleGallery); //galleryButton isn't the same as $(".chx_menuGalleryButton") after appending the ] to menuButtonHolder.
+		
+		menuButtonHolder.append(" ]");
 	}
 }
 
