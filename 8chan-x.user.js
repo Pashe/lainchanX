@@ -726,28 +726,6 @@ function initMenu() { //Pashe, WTFPL
 	var menu = window.document.getElementsByClassName("boardlist")[0];
 	var $menu = $(menu);
 	
-	if ((!$(".boardlist.bottom").find('[data-description="3"]').length) && ($(".boardlist.bottom").find('[data-description="1"]').length)) {
-		var topBoardsLinks = [];
-
-		$.ajax("/boards-top20.json", {
-			async: true,
-			cache: true,
-			success: function(response) {
-				for (var x in response) {
-					topBoardsLinks.push(sprintf(
-						'<a href="/%s/" title="%s &bull; %s &bull; %s">%s</a>',
-						response[x].uri,
-						response[x].title,
-						response[x].subtitle,
-						response[x].tags.join("/"),
-						response[x].uri
-					));
-				}
-				$(".boardlist.bottom").find('[data-description="1"]').after(sprintf(' <span class="chx_topBoards">[ %s ]</span>', topBoardsLinks.slice(0,15).join(" / ")));
-			}
-		});
-	}
-	
 	if (getSetting('catalogLinks') && !isOnCatalog()) {
 		$('.favorite-boards a').each(function () {
 			$(this).attr("href", $(this).attr("href")+"/catalog.html");
