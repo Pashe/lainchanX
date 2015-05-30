@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Pashe's LainchanX v2 [pure]
-// @version     2.0.0.####TIMESTAMP####
+// @version     2.0.0.0
 // @description Small userscript to improve 8chan
 // @icon        https://cdn.rawgit.com/Pashe/lainchanX/2-0_pure/images/logo.svg
 // @namespace   https://github.com/Pashe/lainchanX/tree/2-0
