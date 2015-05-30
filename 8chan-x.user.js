@@ -86,11 +86,6 @@ var thisBoardAnonName;
 ////////////////
 var settingsMenu = window.document.createElement('div');
 
-if (window.Options) {
-	var tab = window.Options.add_tab('LainchanX', 'times', 'LainchanX');
-	$(settingsMenu).appendTo(tab.content);
-}
-
 settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure</span>', GM_info.script.version)
 + '<div style="overflow:auto;height:100%;">' //General
 + '<label><input type="checkbox" name="catalogLinks">' + 'Force catalog links' + '</label><br>'
@@ -129,6 +124,7 @@ settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure
 $(settingsMenu).find(".chx_FilterField").css("text-align", "right");
 $(settingsMenu).find('input').css("max-width", "100%");
 
+$(settingsMenu).appendTo($("body"));
 
 var defaultSettings = {
 	'precisePages': true,
