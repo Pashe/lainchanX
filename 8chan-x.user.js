@@ -726,16 +726,6 @@ function initMenu() { //Pashe, WTFPL
 	var menu = window.document.getElementsByClassName("boardlist")[0];
 	var $menu = $(menu);
 	
-	// [data-description="0"] - home, boards
-	// [data-description="1"] - pinned boards (/b/, /meta/, /int/)
-	// [data-description="2"] - twitter
-	// [data-description="3"] - top boards
-	
-	$('[data-description="1"], [data-description="2"]').hide();
-	$(".boardlist.bottom").find('[data-description="0"], [data-description="2"], .favorite-boards').hide(); //Hide stuff that's at the top already
-	$(".boardlist.bottom").find('[data-description="1"]').show(); //Show pinned boards at the bottom
-	$(".boardlist.bottom").find('.favorite-boards').next().hide(); //Hide the watchlist link at the bottom
-	
 	if ((!$(".boardlist.bottom").find('[data-description="3"]').length) && ($(".boardlist.bottom").find('[data-description="1"]').length)) {
 		var topBoardsLinks = [];
 
