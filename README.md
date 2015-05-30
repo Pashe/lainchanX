@@ -1,20 +1,10 @@
-#![8](https://cdn.rawgit.com/Pashe/8chanX/2-0_pure/images/logo.svg)chanX 2.0 Pure
-#[Click here to install](https://github.com/Pashe/8chanX/raw/2-0_pure/8chan-x.user.js)
+#!LainchanX 2.0 Pure
+#[Click here to install](https://github.com/Pashe/lainchanX/raw/2-0_pure/8chan-x.user.js)
 
-This branch removes a few features in order to improve compatibility. You should not use this branch if [2.0](https://github.com/Pashe/8chanX/tree/2-0) works for you.
 ***
 
 This userscript adds various features and options like:
- * Gallery
- * Filters
- * Reverse image search
- * Flag preview
- * Mascots
- * Notifications
- * Relative post dates
- * Post and image counts in the menu
- * Many other poorly written hacks
- * Not as dead as tux's version
+ * WIP
 
 This is a userscript, you will need an addon to run it properly
 
