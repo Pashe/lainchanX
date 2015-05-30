@@ -733,7 +733,7 @@ function initMenu() { //Pashe, WTFPL
 	}
 	
 	if (isOnThread()) {
-		var menuButtonHolder = $('<span class="sub chx_topBarSub">[ </span>');
+		var menuButtonHolder = $(' <span class="sub chx_topBarSub">[ </span>');
 		menuButtonHolder.appendTo($("div.boardlist"));
 		
 		$('#update_secs').remove();
@@ -857,19 +857,6 @@ function initCatalog() { //Pashe, WTFPL
 			});
 		}
 	});
-	
-	//setCatalogImageSize
-	var catalogStorage = JSON.parse(localStorage.catalog);
-	if (!catalogStorage.image_size) {
-		catalogStorage.image_size = "large";
-		localStorage.catalog = JSON.stringify(catalogStorage);
-		
-		$(".grid-li").removeClass("grid-size-vsmall");
-		$(".grid-li").removeClass("grid-size-small");
-		$(".grid-li").removeClass("grid-size-large");
-		$(".grid-li").addClass("grid-size-" + catalogStorage.image_size);
-		$("#image_size").val(catalogStorage.image_size);
-	}
 	
 	//addCatalogNullImagePlaceholders
 	$("img[src=''], img[src='/static/no-file.png']").attr("src", "data:image/svg+xml;base64,PHN2ZyB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiIHZlcnNpb249IjEuMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCwtODYwKSI+PHRleHQgc3R5bGU9ImxldHRlci1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7d29yZC1zcGFjaW5nOjBweDt0ZXh0LWFsaWduOmNlbnRlcjsiIHhtbDpzcGFjZT0icHJlc2VydmUiIGZvbnQtc2l6ZT0iNjRweCIgeT0iOTMwIiB4PSI5NSIgZm9udC1mYW1pbHk9IidBZG9iZSBDbGVhbiBVSScsIHNhbnMtc2VyaWYiIGxpbmUtaGVpZ2h0PSIxMjUlIiBmaWxsPSIjMDAwMDAwIj48dHNwYW4geD0iOTUiIHk9IjkyOSI+Tm88L3RzcGFuPjx0c3BhbiB4PSI5NSIgeT0iMTAxMCI+SW1hZ2U8L3RzcGFuPjwvdGV4dD48L2c+PC9zdmc+");
