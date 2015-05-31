@@ -837,16 +837,12 @@ function initCatalog() { //Pashe, WTFPL
 	if (!isOnCatalog()) {return;}
 	
 	//addCatalogPages
-	if (getSetting("precisePages")) { 
-		$(".thread").each(function (e, ele) {
-			var threadId = $(ele).html().match(/<a href="[^0-9]*([0-9]+).html?">/)[1];
-			var threadPage = getThreadPage(threadId, thisBoard, true);
-			
-			$(ele).find("strong").first().html(function(e, html) {
-				return html.replace(/P: [0-9]+/, ("P: " + (threadPage<1?"<span style='opacity:0.5'>???</span>":threadPage)));
-			});
-		});
-	};
+	$(".thread").each(function (e, ele) {
+		var threadId = $(ele).html().match(/<a href="[^0-9]*([0-9]+).html?">/)[1];
+		var threadPage = getThreadPage(threadId, thisBoard, true);
+		
+		$(ele).find("strong").first().append(" / P: " + (threadPage<1?"<span style='opacity:0.5'>???</span>":threadPage));
+	});
 	
 	//highlightCatalogAutosage
 	$(".replies").each(function (e, ele) {
