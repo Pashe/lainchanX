@@ -22,6 +22,8 @@
 ** varemenos
 ** 7185
 ** anonish
+** Cloudflare
+** bucketcapacity
 ** Pashe
 */
 
@@ -92,6 +94,9 @@ settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure
 + '<label><input type="checkbox" name="revealImageSpoilers">' + 'Reveal image spoilers' + '</label><br>'
 + '<label><input type="checkbox" name="hideNoFilePosts">' + 'Hide posts without files' + '</label><br>'
 + '<label><input type="checkbox" name="keyboardShortcutsEnabled">' + 'Enable keyboard shortcuts' + '</label><br>'
++ '<label><input type="checkbox" name="nestedReplies">' + 'Nested replies' + '</label><br>'
++ '<label><input type="checkbox" name="CSSTweaks">' + 'CSS tweaks' + '</label><br>'
++ '<label><input type="checkbox" name="shortLinks">' + 'Short links' + '</label><br>'
 + '<hr>' //How information is displayed
 + '<label><input type="checkbox" name="reverseImageSearch">' + 'Add reverse image search links' + '</label><br>'
 + '<label><input type="checkbox" name="parseTimestampImage">' + 'Guess original download date of imageboard-style filenames' + '</label><br>'
@@ -136,6 +141,9 @@ var defaultSettings = {
 	'dateFormat':"",
 	'mascotUrl':"",
 	'keyboardShortcutsEnabled': true,
+	'nestedReplies': false,
+	'CSSTweaks': false,
+	'shortLinks': false,
 	'filterDefaultRegex': '',
 	'filterDefaultRecursive': true,
 	'filterDefaultStubs': false,
@@ -1055,6 +1063,70 @@ function initRelativeTime() {
 	if (!getSetting("dateFormat")) {$("time").timeago();}
 }
 
+function initCSSTweaks() {
+	//https://gist.github.com/anonymous/d17042a68685774eb5d8
+	
+	if (!getSetting("CSSTweaks")) {return;}
+	
+	var Style = document.createElement('style');
+	Style.setAttribute('type', 'text/css');
+	// var Dcss = 'div.boardlist:nth-child(1) { position: absolute !important; }'; //I just turned this off because it was bothering me
+	var Dcss = 'div.post .reply { border-left: 2px solid rgba(255, 255, 255, 0.2); border-top: none; border-right: none; border-bottom: none; margin left: 26px;}';
+	Dcss += 'div.post .reply.highlighted { border-left: 2px solid orange; border-top: none; border-right: none; border-bottom: none;}';
+	Dcss += 'hr {height: 0px;}';
+	Dcss += 'div.post.reply {min-width: 51%;}';
+	Dcss += 'div.post.reply {width: 100%; max-width: 99.4% !important;}';
+	Dcss += 'div.postcontainer {display: block !important; white-space: inherit;}';
+	Dcss += 'div[data-board] > br, div[data-board] > hr, .sidearrows, footer {display: none !important;}';
+	Dcss += 'div.post.op {padding-bottom: 5px; margin-bottom: 0 !important;}';
+	Dcss += 'div[data-board] {margin: 10px 0 20px 0;}';
+	Dcss += 'img.post-image {margin: 5px 10px 5.5px 2px !important;}';
+	Dcss += '.thread.grid-li.grid-size-small {margin-left: 0 !important; padding: 0 !important; margin-right: 0 !important; max-height: 340px !important; height: 340px;}';
+	Dcss += 'span.omitted {clear: both; margin-left: 0 !important;}';
+	Style.innerHTML = Dcss;
+	document.getElementsByTagName('head')[0].appendChild(Style); 
+}
+
+function initNestedReplies() {
+	//https://gist.github.com/anonymous/d17042a68685774eb5d8
+	
+	if (!getSetting("nestedReplies")) {return;}
+	
+	$(document).ready(function() {
+		var getNumericPart = function(id) {
+			var $num = id.replace(/[^\d]+/, '');
+			return $num;
+		}
+		
+		$("*[class^=mentioned-]").each(function() {
+			var reply_id = getNumericPart($(this).attr("href"));
+			var replydiv = "#reply_" + reply_id;
+			var parent_id = $(this).closest("div").attr("id");
+			var parentdiv = "#" + parent_id;
+			$(replydiv).next("br").remove();
+			$(parentdiv).append($(replydiv));
+		});        
+	});
+}
+
+function initShortLinks() {
+	//https://gist.github.com/anonymous/d17042a68685774eb5d8
+	
+	if (!getSetting("shortLinks")) {return;}
+	
+	$("*[class^=post_no]").each(function() {
+		var post_link =  $(this).attr("href");
+		var split = post_link.split('/');
+		var board = split[1];
+		var rest = split[3].split('.');
+		var thread = rest[0];
+		var rest2 = split[3].split('#');
+		var post = rest2[1].replace(board, '');
+		var url = 'https://lain.io/' + board + '/' + thread + '/' + post;
+		$(this).attr("href", url);
+	});   
+}
+
 ////////////////
 //INIT CALLS
 ////////////////
@@ -1074,6 +1146,9 @@ $(window.document).ready(function() { try {
 	initKeyboardShortcuts();
 	initpurgeDeadFavorites();
 	initRelativeTime();
+	initCSSTweaks();
+	initNestedReplies();
+	initShortLinks();
 } catch(e) {chxErrorHandler(e, "ready");}});
 
 ////////////////
