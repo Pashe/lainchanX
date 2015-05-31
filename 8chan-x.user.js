@@ -114,7 +114,6 @@ settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure
 + '<div style="overflow:auto;height:100%;">' //General
 + '<label><input type="checkbox" name="imageHover">' + 'Image hover' + '</label><label><input type="checkbox" name="imageHoverFollowCursor">' + 'follow cursor' + '</label><br>'
 + '<label><input type="checkbox" name="catalogImageHover">' + 'Image hover on catalog' + '</label><br>'
-+ '<label><input type="checkbox" name="catalogLinks">' + 'Force catalog links' + '</label><br>'
 + '<label><input type="checkbox" name="revealImageSpoilers">' + 'Reveal image spoilers' + '</label><br>'
 + '<label><input type="checkbox" name="hideNoFilePosts">' + 'Hide posts without files' + '</label><br>'
 + '<label><input type="checkbox" name="keyboardShortcutsEnabled">' + 'Enable keyboard shortcuts' + '</label><br>'
@@ -161,7 +160,6 @@ $(settingsMenu).appendTo(settingsContainer);
 
 var defaultSettings = {
 	'precisePages': true,
-	'catalogLinks': true,
 	'revealImageSpoilers': false,
 	'imageHover': true,
 	'imageHoverFollowCursor': false,
@@ -869,12 +867,6 @@ function initMenu() { //Pashe, WTFPL
 	var menu = window.document.getElementsByClassName("boardlist")[0];
 	var $menu = $(menu);
 	
-	if (getSetting('catalogLinks') && !isOnCatalog()) {
-		$('.favorite-boards a').each(function () {
-			$(this).attr("href", $(this).attr("href")+"/catalog.html");
-		});
-	}
-	
 	topBarSubItems = [];
 	
 	var settingsButton = $('<a href="javascript:void(0)" title="Settings"><i class="fa fa-cog chx_settingsButton"></i></a>');
@@ -1193,7 +1185,7 @@ function initFormattedTime() { //Pashe, WTFPL
 	});
 }
 
-function initFilter() { //Pashe, WTFPL	
+function initFilter() { //Pashe, WTFPL
 	$(".reply").each(runFilter);
 	
 	$.ajax({
