@@ -97,7 +97,7 @@ settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure
 + '<label><input type="checkbox" name="parseTimestampImage">' + 'Guess original download date of imageboard-style filenames' + '</label><br>'
 + '<label><input type="checkbox" name="precisePages">' + 'Increase page indicator precision' + '</label><br>'
 + '<label>' + 'Mascot URL(s) (pipe separated):<br />' + '<input type="text" name="mascotUrl" style="width: 30em"></label><br>'
-+ '<label>' + '<a href="http://strftime.net/">Date format</a>:<br />' + '<input type="text" name="dateFormat" style="width:30em"></label><br>'
++ '<label>' + '<a href="http://strftime.net/">Date format</a> (relative dates when empty):<br />' + '<input type="text" name="dateFormat" style="width:30em"></label><br>'
 + '<label><input type="checkbox" name="localTime">' + 'Use local time' + '</label><br>'
 + '<hr>' //Filters
 + '<h3>Filters</h3>'
@@ -1051,6 +1051,10 @@ function initFilter() { //Pashe, WTFPL
 });
 }
 
+function initRelativeTime() {
+	if (!getSetting("dateFormat")) {$("time").timeago();}
+}
+
 ////////////////
 //INIT CALLS
 ////////////////
@@ -1069,6 +1073,7 @@ $(window.document).ready(function() { try {
 	initFlagIcons();
 	initKeyboardShortcuts();
 	initpurgeDeadFavorites();
+	initRelativeTime();
 } catch(e) {chxErrorHandler(e, "ready");}});
 
 ////////////////
@@ -1099,6 +1104,10 @@ function intervalMenu() {
 	updateMenuStats();
 }
 
+function onNewPostRelativeTime(post) {
+	if (!getSetting("dateFormat")) {$(post).find("time").timeago();}
+}
+
 ////////////////
 //EVENT HANDLERS
 ////////////////
@@ -1108,6 +1117,7 @@ if (window.jQuery) {
 		onNewPostNotifications(post);
 		onNewPostFormattedTime();
 		onNewPostFilter(post);
+		onNewPostRelativeTime(post);
 	} catch(e) {chxErrorHandler(e, "newpost");}});
 
 	setInterval(intervalMenu, (1.5*60*1000));
