@@ -86,6 +86,28 @@ var thisBoardAnonName;
 ////////////////
 //SETTINGS
 ////////////////
+var settingsContainer = $('<div id="chx_settingsContainer"></div>')
+settingsContainer.css({
+	"display":          "flex",
+	"justify-content":  "center",
+	"align-items":      "center",
+	"width":            "100%",
+	"height":           "100%",
+	"background-color": "rgba(0,0,0,0.8)",
+	"overflow":         "auto",
+	"z-index":          "102",
+	"position":         "fixed",
+	"left":             "0",
+	"top":              "0",
+	"color":            "#aaa",
+});
+settingsContainer.appendTo("body");
+settingsContainer.hide();
+$('div#chx_settingsContainer').attr("data-hidden", "true");
+settingsContainer.click(function(e) {
+	if (e.target == this) {hideSettings();}
+});
+
 var settingsMenu = window.document.createElement('div');
 
 settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure</span>', GM_info.script.version)
@@ -130,8 +152,12 @@ settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure
 
 $(settingsMenu).find(".chx_FilterField").css("text-align", "right");
 $(settingsMenu).find('input').css("max-width", "100%");
+$(settingsMenu).css({
+	"border":           "2pt solid #555",
+	"background-color": "rgba(0,0,0,0.8)",
+});
 
-$(settingsMenu).appendTo($("body"));
+$(settingsMenu).appendTo(settingsContainer);
 
 var defaultSettings = {
 	'precisePages': true,
@@ -206,6 +232,20 @@ function setupControl(control) {
 			});
 			break;
 	}
+}
+
+function showSettings() { //Pashe, WTFPL
+	$('div#chx_settingsContainer').show();
+	$('div#chx_settingsContainer').attr("data-hidden", "false");
+}
+
+function hideSettings() { //Pashe, WTFPL
+	$('div#chx_settingsContainer').hide();
+	$('div#chx_settingsContainer').attr("data-hidden", "true");
+}
+
+function toggleSettings() { //Pashe, WTFPL
+	if ($('div#chx_settingsContainer').attr("data-hidden") === "true" || undefined) {showSettings();} else {hideSettings();}
 }
 
 ////////////////
@@ -835,9 +875,30 @@ function initMenu() { //Pashe, WTFPL
 		});
 	}
 	
+	topBarSubItems = [];
+	
+	var settingsButton = $('<a href="javascript:void(0)" title="Settings"><i class="fa fa-cog chx_settingsButton"></i></a>');
+	topBarSubItems.push(settingsButton);
+	
 	if (isOnThread()) {
-		var menuButtonHolder = $(' <span class="sub chx_topBarSub">[ </span>');
-		menuButtonHolder.appendTo($("div.boardlist"));
+		var galleryButton = $('<a href="javascript:void(0)" title="Gallery"><i class="fa fa-th-large chx_menuGalleryButton"></i></a>');
+		topBarSubItems.push(galleryButton);
+	}
+	
+	if (topBarSubItems.length > 0) {
+		var topBarSub = $('<span class="sub chx_topBarSub">[ </span>');
+		$("div.boardlist").append(" ");
+		$("div.boardlist").append(topBarSub);
+		for (var i in topBarSubItems) {
+			topBarSub.append(topBarSubItems[i]);
+			if (i < topBarSubItems.length-1) {topBarSub.append(" / ");}
+		}
+		topBarSub.append(" ]");
+	}
+	
+	$(".chx_settingsButton").on("click", toggleSettings);
+	if (isOnThread()) {
+		$(".chx_menuGalleryButton").on("click", toggleGallery);
 		
 		$('#update_secs').remove();
 		
@@ -860,15 +921,7 @@ function initMenu() { //Pashe, WTFPL
 		statsNode.appendTo($menu);
 		
 		updateMenuStats();
-		
-		var galleryButton = $('<a href="javascript:void(0)" title="Gallery"><i class="fa fa-th-large chx_menuGalleryButton"></i></a>');
-		
-		galleryButton.appendTo(menuButtonHolder);
-		
-		$(".chx_menuGalleryButton").on("click", toggleGallery); //galleryButton isn't the same as $(".chx_menuGalleryButton") after appending the ] to menuButtonHolder.
-		
-		menuButtonHolder.append(" ]");
-	}
+	};
 }
 
 function initRevealImageSpoilers() { //Tux et al, MIT
@@ -904,6 +957,7 @@ function initKeyboardShortcuts() { //Pashe, heavily influenced by Tux et al, WTF
 		if (e.keyCode == 27) {
 			$('#quick-reply').remove();
 			closeGallery();
+			hideSettings();
 		}
 		
 		if (e.target.nodeName == "INPUT" || e.target.nodeName == "TEXTAREA") {return;}
