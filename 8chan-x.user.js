@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Pashe's LainchanX v2 [pure]
-// @version     2.0.0.1
+// @version     2.0.0.2
 // @description Small userscript to improve 8chan
 // @icon        https://cdn.rawgit.com/Pashe/lainchanX/2-0_pure/images/logo.svg
 // @namespace   https://github.com/Pashe/lainchanX/tree/2-0
@@ -90,6 +90,8 @@ var settingsMenu = window.document.createElement('div');
 
 settingsMenu.innerHTML = sprintf('<span style="font-size:8pt;">LainchanX %s pure</span>', GM_info.script.version)
 + '<div style="overflow:auto;height:100%;">' //General
++ '<label><input type="checkbox" name="imageHover">' + 'Image hover' + '</label><label><input type="checkbox" name="imageHoverFollowCursor">' + 'follow cursor' + '</label><br>'
++ '<label><input type="checkbox" name="catalogImageHover">' + 'Image hover on catalog' + '</label><br>'
 + '<label><input type="checkbox" name="catalogLinks">' + 'Force catalog links' + '</label><br>'
 + '<label><input type="checkbox" name="revealImageSpoilers">' + 'Reveal image spoilers' + '</label><br>'
 + '<label><input type="checkbox" name="hideNoFilePosts">' + 'Hide posts without files' + '</label><br>'
@@ -135,6 +137,9 @@ var defaultSettings = {
 	'precisePages': true,
 	'catalogLinks': true,
 	'revealImageSpoilers': false,
+	'imageHover': true,
+	'imageHoverFollowCursor': false,
+	'catalogImageHover': true,
 	'reverseImageSearch': true,
 	'parseTimestampImage': true,
 	'localTime': true,
@@ -310,7 +315,97 @@ function updateMenuStats() { //Pashe, WTFPL
 			$("#chx_menuPage").html(nPage);
 		}
 	});
+}
+
+////////////////
+//IMAGE HOVER
+////////////////
+function imageHoverStart(e) { //Pashe, anonish, WTFPL
+	var hoverImage = $("#chx_hoverImage");
 	
+	if (hoverImage.length) {
+		if (getSetting("imageHoverFollowCursor")) {
+			var scrollTop = $(window).scrollTop();
+			var imgY = e.pageY;
+			var imgTop = imgY;
+			var windowWidth = $(window).width();
+			var imgWidth = hoverImage.width() + e.pageX;
+			
+			if (imgY < scrollTop + 15) {
+				imgTop = scrollTop;
+			} else if (imgY > scrollTop + $(window).height() - hoverImage.height() - 15) {
+				imgTop = scrollTop + $(window).height() - hoverImage.height() - 15;
+			}
+			
+			if (imgWidth > windowWidth) {
+				hoverImage.css({
+					'left': (e.pageX + (windowWidth - imgWidth)),
+					'top' : imgTop,
+				});
+			} else {
+				hoverImage.css({
+					'left': e.pageX,
+					'top' : imgTop,
+				});
+			}
+			
+			hoverImage.appendTo($("body"));
+		}
+		
+		return;
+	}
+	
+	var $this = $(this);
+	
+	var fullUrl;
+	if ($this.parent().attr("href").match("src")) {
+		fullUrl = $this.parent().attr("href");
+	} else if (isOnCatalog()) {
+		$this.css("cursor", "progress");
+		fullUrl = $this.attr("src");
+		$.ajax(($this.parent().attr("href").replace(/\.html$/, ".json")), {
+			success: function (result) {
+				$this.css("cursor", "unset");
+				fullUrl = result.posts[0].tim + result.posts[0].ext;
+				if (!isImage(getFileExtension(fullUrl))) {return;}
+				$("#chx_hoverImage").attr("src", sprintf("/%s/src/%s", thisBoard, fullUrl));
+				$("#chx_hoverImage").on("load", function() {$this.css("cursor", "none")});
+			},
+			async: true,
+			cache: true
+		});
+	}
+	
+	if (isVideo(getFileExtension(fullUrl))) {return;}
+	
+	hoverImage = $(sprintf('<img id="chx_hoverImage" src="%s" />', fullUrl));
+	if (getSetting("imageHoverFollowCursor")) {
+		hoverImage.css({
+			"position"      : "absolute",
+			"z-index"       : 101,
+			"pointer-events": "none",
+			"max-width"     : $(window).width(),
+			"max-height"    : $(window).height(),
+			'left'          : e.pageX,
+			'top'           : imgTop,
+		});
+	} else {
+		hoverImage.css({
+			"position"      : "fixed",
+			"top"           : 0,
+			"right"         : 0,
+			"z-index"       : 101,
+			"pointer-events": "none",
+			"max-width"     : "100%",
+			"max-height"    : "100%",
+		});
+	}
+	hoverImage.appendTo($("body"));
+	if (isOnThread()) {$this.css("cursor", "none");}
+}
+
+function imageHoverEnd() { //Pashe, WTFPL
+	$("#chx_hoverImage").remove();
 }
 
 ////////////////
@@ -1105,7 +1200,7 @@ function initNestedReplies() {
 			var parentdiv = "#" + parent_id;
 			$(replydiv).next("br").remove();
 			$(parentdiv).append($(replydiv));
-		});        
+		});
 	});
 }
 
@@ -1124,7 +1219,29 @@ function initShortLinks() {
 		var post = rest2[1].replace(board, '');
 		var url = 'https://lain.io/' + board + '/' + thread + '/' + post;
 		$(this).attr("href", url);
-	});   
+	});
+}
+
+function initImageHover() { //Pashe, influenced by tux, et al, WTFPL
+	if (!getSetting("imageHover") && !getSetting("catalogImageHover")) {return;}
+	
+	var selectors = [];
+	
+	if (getSetting("imageHover")) {selectors.push("img.post-image", "canvas.post-image");}
+	if (getSetting("catalogImageHover") && isOnCatalog()) {
+		selectors.push(".thread-image");
+		$(".theme-catalog div.thread").css("position", "inherit");
+	}
+	
+	$(selectors.join(", ")).each(function () {
+		if ($(this).parent().data("expanded")) {return;}
+		
+		var $this = $(this);
+		
+		$this.on("mousemove", imageHoverStart);
+		$this.on("mouseout",  imageHoverEnd);
+		$this.on("click",     imageHoverEnd);
+	});
 }
 
 ////////////////
@@ -1149,6 +1266,7 @@ $(window.document).ready(function() { try {
 	initCSSTweaks();
 	initNestedReplies();
 	initShortLinks();
+	initImageHover();
 } catch(e) {chxErrorHandler(e, "ready");}});
 
 ////////////////
@@ -1183,6 +1301,20 @@ function onNewPostRelativeTime(post) {
 	if (!getSetting("dateFormat")) {$(post).find("time").timeago();}
 }
 
+function onNewPostImageHover(post) { //Pashe, influenced by tux, et al, WTFPL
+	if (!getSetting("imageHover")) {return;}
+	
+	$(post).find("img.post-image, canvas.post-image").each(function () {
+		var $this = $(this);
+		
+		if (!$this.parent().data("expanded")) {
+			$this.on("mousemove", imageHoverStart);
+			$this.on("mouseout",  imageHoverEnd);
+			$this.on("click",     imageHoverEnd);
+		}
+	});
+}
+
 ////////////////
 //EVENT HANDLERS
 ////////////////
@@ -1193,6 +1325,7 @@ if (window.jQuery) {
 		onNewPostFormattedTime();
 		onNewPostFilter(post);
 		onNewPostRelativeTime(post);
+		onNewPostImageHover(post);
 	} catch(e) {chxErrorHandler(e, "newpost");}});
 
 	setInterval(intervalMenu, (1.5*60*1000));
