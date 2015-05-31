@@ -1,10 +1,17 @@
-#!LainchanX 2.0 Pure
+#LainchanX
 #[Click here to install](https://github.com/Pashe/lainchanX/raw/2-0_pure/8chan-x.user.js)
 
 ***
 
 This userscript adds various features and options like:
- * WIP
+ * Gallery
+ * Filters
+ * Reverse image search
+ * Mascots
+ * Relative post dates
+ * Customizable post date format
+ * Post count, image count, and page indicator on the top bar
+ * Many other poorly written hacks
 
 This is a userscript, you will need an addon to run it properly
 
