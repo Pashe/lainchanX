@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Pashe's LainchanX v2 [pure]
-// @version     2.0.0.2
+// @version     2.0.0.3
 // @description Small userscript to improve 8chan
 // @icon        https://cdn.rawgit.com/Pashe/lainchanX/2-0_pure/images/logo.svg
 // @namespace   https://github.com/Pashe/lainchanX/tree/2-0
@@ -891,16 +891,6 @@ function initMenu() { //Pashe, WTFPL
 	$(".chx_settingsButton").on("click", toggleSettings);
 	if (isOnThread()) {
 		$(".chx_menuGalleryButton").on("click", toggleGallery);
-		
-		$('#update_secs').remove();
-		
-		var updateNode = $("<span></span>");
-		updateNode.attr("id", "update_secs");
-		updateNode.css("font-family", "'Source Code Pro', monospace");
-		updateNode.css("padding-left", "3pt");
-		updateNode.attr("title","Update thread");
-		updateNode.click(function() {$('#update_thread').click();});
-		updateNode.appendTo($menu);
 		
 		var statsNode = $("<span></span>");
 		statsNode.html(
